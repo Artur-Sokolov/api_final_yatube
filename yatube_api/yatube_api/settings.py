@@ -21,7 +21,6 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'api',
     'posts',
-    'django_extensions',
 ]
 
 MIDDLEWARE = [
