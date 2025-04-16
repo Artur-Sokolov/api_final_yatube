@@ -2,11 +2,13 @@ from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from django.contrib.auth.models import User
 
-from posts.models import Comment, Post, Follow
+from posts.models import Comment, Post, Follow, Group
 
 
 class PostSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(slug_field='username', read_only=True)
+    group = serializers.PrimaryKeyRelatedField(
+        queryset=Group.objects.all(), required=False, allow_null=True)
 
     class Meta:
         fields = '__all__'
@@ -24,10 +26,12 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class FollowSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(
-        read_only=True, default=serializers.CurrentUserDefault()
+    user = serializers.SlugRelatedField(
+        slug_field='username', read_only=True, default=serializers.CurrentUserDefault()
     )
-    following = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    following = serializers.SlugRelatedField(
+        slug_field='username', queryset=User.objects.all()
+    )
 
     class Meta:
         model = Follow
@@ -38,4 +42,16 @@ class FollowSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Нельзя подписаться на самого себя'
             )
+        if Follow.objects.filter(
+            user=self.context['request'].user, following=data['following']
+        ).exists():
+            raise serializers.ValidationError(
+                'Вы уже подписаны на этого автора'
+            )
         return data
+
+
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ('id', 'title', 'slug', 'description')

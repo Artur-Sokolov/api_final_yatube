@@ -8,7 +8,7 @@ from api.permissions import IsOwnerOrReadOnly
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permissions_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+    permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -17,7 +17,7 @@ class PostViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permissions_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+    permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
     def get_queryset(self):
         post_id = self.kwargs.get('post_id')
