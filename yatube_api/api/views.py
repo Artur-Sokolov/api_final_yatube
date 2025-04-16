@@ -1,5 +1,4 @@
 from rest_framework import viewsets, permissions, filters
-from rest_framework.response import Response
 from posts.models import Follow
 from api.serializers import FollowSerializer
 

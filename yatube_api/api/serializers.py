@@ -2,7 +2,6 @@ from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from django.contrib.auth.models import User
 
-
 from posts.models import Comment, Post, Follow
 
 
@@ -23,11 +22,13 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
         model = Comment
 
+
 class FollowSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(
         read_only=True, default=serializers.CurrentUserDefault()
     )
     following = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+
 
     class Meta:
         model = Follow
