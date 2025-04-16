@@ -18,8 +18,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'djoser',
+    'rest_framework_simplejwt',
     'api',
     'posts',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -92,7 +94,7 @@ STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
@@ -100,5 +102,7 @@ REST_FRAMEWORK = {
 }
 
 DJOSER = {
+    'LOGIN_FIELD': 'username',
     'SERIALIZERS': {},
+    'TOKEN_MODEL': None,
 }

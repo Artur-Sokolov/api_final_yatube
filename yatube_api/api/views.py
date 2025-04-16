@@ -9,6 +9,7 @@ class FollowViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     filter_backends = [filters.SearchFilter]
     search_fields = ['following__username']
+    pagination_class = None
 
     def get_queryset(self):
         return Follow.objects.filter(user=self.request.user)
@@ -21,3 +22,4 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    pagination_class = None
