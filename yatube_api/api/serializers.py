@@ -29,12 +29,14 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class FollowSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(
-        slug_field='username',
         read_only=True,
+        slug_field='username',
         default=serializers.CurrentUserDefault()
     )
     following = serializers.SlugRelatedField(
-        slug_field='username', queryset=User.objects.all()
+        queryset=User.objects.all(),
+        slug_field='username',
+        required=True
     )
 
     class Meta:
@@ -44,15 +46,14 @@ class FollowSerializer(serializers.ModelSerializer):
             UniqueTogetherValidator(
                 queryset=Follow.objects.all(),
                 fields=('user', 'following'),
-                message='Вы уже подписаны на этого автора'
+                message='Вы уже подписаны на этого пользователя.'
             )
         ]
 
     def validate(self, data):
-        if data['following'] == self.context['request'].user:
+        if self.context['request'].user == data['following']:
             raise serializers.ValidationError(
-                'Нельзя подписаться на самого себя'
-            )
+                'Нельзя подписаться на самого себя')
         return data
 
 
