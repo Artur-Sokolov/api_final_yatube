@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, filters, status
+from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.pagination import LimitOffsetPagination
@@ -10,7 +10,9 @@ from .serializers import PostSerializer, CommentSerializer
 from .permissions import IsOwnerOrReadOnly
 
 
-class FollowViewSet(viewsets.ModelViewSet):
+class FollowViewSet(mixins.ListModelMixin,
+                    mixins.CreateModelMixin,
+                    viewsets.GenericViewSet):
     serializer_class = FollowSerializer
     permission_classes = (permissions.IsAuthenticated,)
     filter_backends = [filters.SearchFilter]
@@ -19,6 +21,9 @@ class FollowViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return self.request.user.follower.all()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
@@ -65,9 +70,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         return get_object_or_404(Post, id=post_id)
 
     def get_queryset(self):
-        post = self.get_post()
-        return post.comments.all()
+        return self.get_post().comments.all()
 
     def perform_create(self, serializer):
-        post = self.get_post()
-        serializer.save(author=self.request.user, post=post)
+        serializer.save(author=self.request.user, post=self.get_post())

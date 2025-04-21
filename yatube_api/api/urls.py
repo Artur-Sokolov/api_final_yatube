@@ -11,7 +11,6 @@ v1_router.register(r'groups', GroupViewSet, basename='groups')
 
 api_v1_urls = [
     path('', include(v1_router.urls)),
-    path('auth/', include('djoser.urls.authtoken')),
     path('', include('djoser.urls.jwt')),
 ]
 
